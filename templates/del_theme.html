@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <!-- <title> {% block title%} {{ title }} {% endblock %} </title> -->
+</head>
+
+<body>
+    {% if not themes %}
+    <p>У вас пока что нет ни одной темы. Создайте их ниже</p>
+    {% else %}
+    <div>
+        <p> Темы: </p>
+        {% for theme in themes %}
+        <p><a class="button" href="{{ url_for('api.page_theme', Theme_name=theme) }}"> {{ theme }} </a> </p>
+        {% endfor %}
+    </div>
+    
+    <form action="" method="POST" class="form-inline">
+        <h1>Удаление тем</h1>
+        <p>Выберите тему для удаления:</p>
+        <p><select id="selecter" type="search" list="character" name="choose_theme" required>
+            <datalist id="character">
+                {% for theme in themes %}
+                <option value="{{ theme }}">{{ theme }}</option>
+                {% endfor %}
+            </datalist>
+        </select></p>
+        <p><input type="submit"  value="Удалить"></p>
+    </form>
+    {% endif %}
+    <div>
+        <a class="button" href="{{url_for('api.edit_theme')}}">Редактировать темы</a>
+    </div>
+    <div>
+        <a class="button" href="{{url_for('index')}}">Вернуться к себе на страницу</a>
+    </div>
+</body>
+
+</html>

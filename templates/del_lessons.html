@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+    <title>Lessons menu</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+            background-color: #eeeeee;
+        }
+
+        .header-col {
+            background-color: #d2dbda;
+        }
+
+        .logo {
+            background-color: #d2dbda;
+            /* background-color: #5fa8bb; */
+            height: 200px;
+        }
+
+        main {
+            background: #eeeeee;
+        }
+
+        /* form {
+            background: white;
+        } */
+
+        .btn-signin {
+            --bs-btn-color: #fff;
+            --bs-btn-bg: #5fa8bb;
+            --bs-btn-border-color: #5fa8bb;
+            --bs-btn-hover-color: #fff;
+            --bs-btn-hover-bg: #ffa147;
+            --bs-btn-hover-border-color: #ffa147;
+            --bs-btn-focus-shadow-rgb: 49, 132, 253;
+            --bs-btn-active-color: #fff;
+            --bs-btn-active-bg: #ea9543;
+            --bs-btn-active-border-color: #ea9543;
+            --bs-btn-active-shadow: inset 0 3px 5pxrgba(0, 0, 0, 0.125);
+            --bs-btn-disabled-color: #fff;
+            --bs-btn-disabled-bg: #5fa8bb;
+            --bs-btn-disabled-border-color: #5fa8bb;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-light sticky-top py-0 header-col">
+            <div class="container-fluid container mx-xs-0">
+                <a class="navbar-brand d-flex align-items-center" href="{{url_for('index')}}">
+                    <img class="mx-1" height="80" src="/static/images/Late2.png" alt="LaTe">
+                    <!-- <span class="d-none d-md-inline-block">LanguaTeach</span> -->
+                </a>
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
+                    aria-labelledby="offcanvasNavbarLabel">
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3 align-items-center">
+                            <li class="nav-item">
+                                <a class="d-flex nav-link link-dark align-items-center border rounded-1" aria-current="page"style="background-color: #a6c5cd;
+                                --bs-nav-link-padding-y: 0.2rem;"
+                                    {% if current_user.role == 'teacher' %} href="{{url_for('api.teacher_site')}}" {% else %} href="{{url_for('api.student_site')}}" {% endif %}>
+                                    <img width="20" height="17" class="me-2 opacity-50 d-lg-none"
+                                        src="/images/menu/home.svg" {% if current_user.role == 'teacher' %} alt="Teacher Site" {% else %} alt="Student Site" {% endif %}>
+                                        {% if current_user.role == 'teacher' %} Teacher Site {% else %} Student Site {% endif %}
+                                </a>
+                            </li>
+                            <li id="menu-services" class="nav-item d-none d-lg-block dropdown-center">
+                                <a class="d-flex nav-link link-dark align-items-center border rounded-1" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #eeeeee;
+                                    --bs-nav-link-padding-y: 0.2rem;">
+                                    {{current_user.name}}
+                                </a>
+                                <ul id="menu" class="dropdown-menu dropdown-menu-end">
+                                    <li><a href="/" class="dropdown-item">Main page</a></li>
+                                    <li><a href="/logout" class="dropdown-item">Log out</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="justify-content-center d-flex flex-column align-items-center mx-auto logo mb-2">
+        <img alt="LanguaTeach" width="550" src="/static/images/LanguaLearn.png" alt="LanguaLearn" />
+        <a> Lessons menu </a>
+    </div>
+    <main class="container">
+        {% if not lessons %}
+        <p>У вас пока не выставлено ни одного урока</p>
+        {% else %}
+        <a class="btn btn-signin" data-bs-toggle="collapse" href="#target">List of your lessons</a>
+        <!-- #target -->
+        <div class="collapse" id="target">
+            <div class="card card-body">
+
+                <div>
+                    <p> Выставленные уроки: </p>
+                    {% if passed_les %}
+                    <a class="button" href="{{ url_for('api.passed_lessons_for_teacher') }}"> Просмотреть пройденные
+                        уроки </a>
+                    {% endif %}
+                    {% for student in students %}
+                    <ul>
+                        <h> {{ student[0] }} :</h>
+                        {% for lesson in lessons %}
+                        {% if student[0] == lesson[0] %}
+                        {% if lesson[1] == "С ним пока нет уроков. Добавьте их ниже" %}
+                        <li>{{ lesson[1] }}</li>
+                        {% else %}
+                        {% if lesson[3]!="Yes" %}
+                        <li>{{ lesson[1] }} {{lesson[3]}}
+                            (<a class="button" href="{{ url_for('go_to_the_lesson', Date=lesson[1]) }}"> Перейти к уроку
+                            </a>)
+                        </li>
+                        {% endif %}
+                        {% endif %}
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+        {% endif %}
+        <div class="card text-center">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link border border-bottom-0" aria-current="true" href="{{url_for('api.add_lessons')}}">Add
+                            lessons</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active border border-bottom-0" href="{{url_for('api.del_lessons')}}">Delete lessons</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <form action="" method="POST" class="form-inline">
+                    <p>Choose lesson:</p>
+                    <p><select id="selecter" type="search" list="character" name="choose_les" required>
+                            <datalist id="character">
+                                {% for lesson in lessons %}
+                                <option value="{{ lesson[1] }}">{{ lesson[0] }} - {{ lesson[1] }}</option>
+                                {% endfor %}
+                            </datalist>
+                        </select></p>
+                    <p><input type="submit" value="Delete"></p>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

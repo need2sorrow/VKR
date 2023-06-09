@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+    <title>Lessons menu</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+            background-color: #eeeeee;
+        }
+
+        .header-col {
+            background-color: #d2dbda;
+        }
+
+        .logo {
+            background-color: #d2dbda;
+            /* background-color: #5fa8bb; */
+            height: 200px;
+        }
+
+        main {
+            background: #eeeeee;
+        }
+
+        /* form {
+            background: white;
+        } */
+
+        .btn-signin {
+            --bs-btn-color: #fff;
+            --bs-btn-bg: #5fa8bb;
+            --bs-btn-border-color: #5fa8bb;
+            --bs-btn-hover-color: #fff;
+            --bs-btn-hover-bg: #ffa147;
+            --bs-btn-hover-border-color: #ffa147;
+            --bs-btn-focus-shadow-rgb: 49, 132, 253;
+            --bs-btn-active-color: #fff;
+            --bs-btn-active-bg: #ea9543;
+            --bs-btn-active-border-color: #ea9543;
+            --bs-btn-active-shadow: inset 0 3px 5pxrgba(0, 0, 0, 0.125);
+            --bs-btn-disabled-color: #fff;
+            --bs-btn-disabled-bg: #5fa8bb;
+            --bs-btn-disabled-border-color: #5fa8bb;
+        }
+
+        .nav-pills .nav-link.active,
+        .nav-pills .show {
+            --bs-nav-pills-link-active-color: white;
+            --bs-nav-pills-link-active-bg: #5fa8bb;
+        }
+
+
+
+        .alert {
+            --bs-alert-padding-y: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-light sticky-top py-0 header-col">
+            <div class="container-fluid container mx-xs-0">
+                <a class="navbar-brand d-flex align-items-center" href="{{url_for('index')}}">
+                    <img class="mx-1" height="80" src="/static/images/Late2.png" alt="LaTe">
+                    <!-- <span class="d-none d-md-inline-block">LanguaTeach</span> -->
+                </a>
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
+                    aria-labelledby="offcanvasNavbarLabel">
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3 align-items-center">
+                            <li class="nav-item">
+                                <a class="d-flex nav-link link-dark align-items-center border rounded-1" aria-current="page"style="background-color: #a6c5cd;
+                                --bs-nav-link-padding-y: 0.2rem;"
+                                    {% if current_user.role == 'teacher' %} href="{{url_for('api.teacher_site')}}" {% else %} href="{{url_for('api.student_site')}}" {% endif %}>
+                                    <img width="20" height="17" class="me-2 opacity-50 d-lg-none"
+                                        src="/images/menu/home.svg" {% if current_user.role == 'teacher' %} alt="Teacher Site" {% else %} alt="Student Site" {% endif %}>
+                                        {% if current_user.role == 'teacher' %} Teacher Site {% else %} Student Site {% endif %}
+                                </a>
+                            </li>
+                            <li id="menu-services" class="nav-item d-none d-lg-block dropdown-center">
+                                <a class="d-flex nav-link link-dark align-items-center border rounded-1" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #eeeeee;
+                                    --bs-nav-link-padding-y: 0.2rem;">
+                                    {{current_user.name}}
+                                </a>
+                                <ul id="menu" class="dropdown-menu dropdown-menu-end">
+                                    <li><a href="/" class="dropdown-item">Main page</a></li>
+                                    <li><a href="/logout" class="dropdown-item">Log out</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="justify-content-center d-flex flex-column align-items-center mx-auto logo mb-2">
+        <img alt="LanguaTeach" width="550" src="/static/images/LanguaLearn.png" alt="LanguaLearn" />
+        <p class="fs-4"> Lessons menu </p>
+    </div>
+    <main class="container">
+        <div class="mt-4 row row-cols-md-2 gap-3">
+            <div class="card text-center" style="width: 38%;">
+                <div class="card-header bg-transparent">
+                    <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active border border-bottom-0" id="future-tab" data-toggle="tab"
+                                data-target="#future" type="button" role="tab" aria-controls="future"
+                                aria-selected="true">List of your lessons</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button
+                                class="nav-link {% if not students_of_this_teacher or not passed_les %} disabled {% endif %} border border-bottom-0"
+                                id="past-tab" data-toggle="tab" data-target="#past" type="button" role="tab"
+                                aria-controls="past" aria-selected="false">Finished lessons</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card card-body border border-0" >
+                    <div class="tab-content" id="lists_lessons">
+
+                        <!-- FUTURE -->
+                        <div class="tab-pane fade show active" id="future" role="tabpanel" aria-labelledby="future-tab">
+                            {% if not future_les %}
+                            <p>You don't have lessons yet</p>
+                            {% else %}
+                            <div>
+                                <!-- {% for student in future_students %}
+                                <button class="btn btn-primary" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#{{ student[0] }}" aria-expanded="false"
+                                    aria-controls="{{ student[0] }}">
+                                    {{ student[0] }}
+                                </button>
+                                {% endfor %}
+                                {% for student in future_students %}
+                                <div class="collapse multi-collapse" id="{{ student[0] }}">
+                                    <div id="lists_future_lessons_for_every_std">
+                                        <ul class="list-group list-group-flush" id="myTab" role="tablist">
+                                            {% for lesson in future_les %}
+                                            {% if student[0] == lesson[0] %}
+                                            <li class="list-group-item">{{ lesson[1] }}</li>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                {% endfor %} -->
+
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Student</th>
+                                            <th scope="col">Theme</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for i, lesson in enumerate(future_les) %}
+                                        <tr>
+                                            <th scope="row">{{i}}</th>
+                                            <td>{{lesson[1]}}</td>
+                                            <td>{{lesson[0]}}</td>
+                                            <td>{{lesson[2]}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- PAST -->
+                        <div class="tab-pane fade" id="past" role="tabpanel" aria-labelledby="past-tab">
+                            <div>
+                                <!-- {% if passed_les %}
+                                {% for student in past_students %}
+                                <ul>
+                                    <h> {{ student[0] }} :</h>
+                                    {% for lesson in passed_les %}
+                                    {% if student[0] == lesson[0] %}
+                                    <li>{{ lesson[1] }} - <a class="button"
+                                            href="{{ url_for('api.page_theme', Teach_email=student[1], Theme_name=lesson[2]) }}">
+                                            {{ lesson[2] }} </a></li>
+                                    {% endif %}
+                                    {% endfor %}
+                                </ul>
+                                {% endfor %}
+                                {% endif %} -->
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Student</th>
+                                            <th scope="col">Theme</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if passed_les %}
+                                        {% for i, lesson in enumerate(passed_les) %}
+                                        <tr>
+                                            <th scope="row">{{i}}</th>
+                                            <td>{{lesson[1]}}</td>
+                                            <td>{{lesson[0]}}</td>
+                                            <td>{{lesson[2]}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card text-center" style="width: 60%;">
+                <div class="card-header bg-transparent">
+                    <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active border border-bottom-0" id="add-tab" data-toggle="tab"
+                                data-target="#add" type="button" role="tab" aria-controls="add" aria-selected="true">Add
+                                lessons</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button
+                                class="nav-link {% if not students_of_this_teacher or not future_les %} disabled {% endif %} border border-bottom-0"
+                                id="edit-tab" data-toggle="tab" data-target="#edit" type="button" role="tab"
+                                aria-controls="edit" aria-selected="false">Edit lessons</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button
+                                class="nav-link {% if not students_of_this_teacher or not future_les %} disabled {% endif %} border border-bottom-0"
+                                id="del-tab" data-toggle="tab" data-target="#del" type="button" role="tab"
+                                aria-controls="del" aria-selected="false">Delete lessons</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="menuCONTENT">
+
+                        <!-- ADD -->
+                        <div class="tab-pane fade show active" id="add" role="tabpanel" aria-labelledby="add-tab">
+                            {% if not students_of_this_teacher %}
+                            <p>Add students first, you don't have'em</p>
+                            <a class="button" href="/add_students">Add students</a>
+                            {% else %}
+
+                            <form action="{{ url_for('api.add_lessons', Form_id='add') }}" method="POST"
+                                class="form-inline">
+                                <label for="selecter" class="form-label">Select the student:</label>
+                                <p><select id="selecter"
+                                        class="form-select border border-warning border-opacity-50 w-50 mx-auto"
+                                        type="search" list="character" name="choose_student" required>
+                                        <datalist id="character">
+                                            {% for student in students_of_this_teacher %}
+                                            <option value="{{ student[1] }}">{{ student[0] }}</option>
+                                            {% endfor %}
+                                        </datalist>
+                                    </select></p>
+                                <div class="input-group has-validation mx-auto">
+                                    <div class="mx-auto w-50 {% if bad_auth!='' %} is-invalid {% endif %}">
+                                        <label for="localdate" class="form-label">Choose date and time:
+                                        </label>
+                                        <input type="datetime-local"
+                                            class="form-control border border-warning border-opacity-50 mx-auto {% if bad_auth!='' %} border-danger is-invalid {% endif %}"
+                                            id="localdate" name="choose_date" required>
+                                    </div>
+                                    <div class="invalid-feedback {% if bad_auth=='' %} visually-hidden {% endif %}">
+                                        {{ bad_auth }}
+                                    </div>
+                                </div>
+                                <!-- <p>
+                                    <label for="localdate" class="form-label">Выберите дату и время занятия: </label>
+                                    <input type="datetime-local" id="localdate" name="choose_date"
+                                        class="form-control border border-warning border-opacity-50 w-50 mx-auto
+                                        {% if bad_auth!='' %} border-danger is-invalid {% endif %}"
+                                        required />
+                                </p>
+                                <div class="invalid-feedback {% if bad_auth=='' %} visually-hidden {% endif %}"
+                                    role="alert">
+                                    <label>{{ bad_auth }}</label>
+                                </div> -->
+                                <input type="submit" class="btn btn-signin w-25 mt-3" name="choose_student1"
+                                    value="Add">
+
+                            </form>
+                            {% endif %}
+                        </div>
+
+                        <!-- EDIT -->
+                        <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
+                            {% if not students_of_this_teacher %}
+                            <p>Add students first, you don't have'em</p>
+                            <a class="button" href="/add_students">Add students</a>
+                            {% else %}
+                            {% if not future_les %}
+                            <p>You don't have lessons yet</p>
+                            {% else %}
+                            <div class="mt-4 row row-cols-md-2 gap-1 px-1 text-center">
+                                <!-- <div class="card text-center" style="width: 100%;"> -->
+                                <!-- <div class="card-body"> -->
+                                <div class="accordion w-100" id="accordionExample">
+                                    {% for student in future_students %}
+                                    <div class="card mb-1">
+                                        <div class="card-header p-0" id="heading{{student[0]}}">
+                                            <h2 class="mb-0 row">
+                                                <button
+                                                    class="btn btn-link btn-block text-left collapsed text-decoration-none"
+                                                    type="button" data-toggle="collapse"
+                                                    data-target="#collapse{{student[0]}}" aria-expanded="false"
+                                                    aria-controls="collapse{{student[0]}}">
+                                                    {{student[0]}}'s lessons
+                                                </button>
+                                            </h2>
+                                        </div>
+                                        <div id="collapse{{student[0]}}" class="collapse"
+                                            aria-labelledby="heading{{student[0]}}" data-parent="#accordionExample">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-3 nav flex-column nav-pills mx-2 p-0"
+                                                        id="v-pills-tab{{student[1]}}" role="tablist"
+                                                        aria-orientation="vertical">
+                                                        {% for i, lesson in enumerate(future_les) %}
+                                                        {% if student[0] == lesson[0] %}
+                                                        <button class="nav-link" id="tab-{{i}}" data-bs-toggle="pill"
+                                                            data-bs-target="#{{i}}" type="button" role="tab"
+                                                            aria-controls="{{i}}">
+                                                            {{lesson[1]}}
+                                                        </button>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                    <div class="col-8 tab-content mx-auto" id="v-pills-tabContent">
+                                                        {% for i, lesson in enumerate(future_les) %}
+                                                        {% if student[0] == lesson[0] %}
+                                                        <div class="tab-pane fade" id="{{i}}" role="tabpanel"
+                                                            aria-labelledby="tab-{{i}}" tabindex="0">
+                                                            <form
+                                                                action="{{url_for('api.add_lessons', Form_id='edit')}}"
+                                                                method="POST" class="form-inline">
+                                                                <div
+                                                                    class="mb-2 {% if bad_auth2!='' %} is-invalid {% endif %}">
+                                                                    <label for="localdate" class="form-label"> Date:
+                                                                    </label>
+                                                                    <input type="datetime-local" value="{{lesson[1]}}"
+                                                                        id="localdate" name="new_date" required
+                                                                        class="form-control border border-warning border-opacity-50 mx-auto {% if bad_auth2!='' %} border-danger is-invalid {% endif %}">
+                                                                </div>
+                                                                <div
+                                                                    class="invalid-feedback {% if bad_auth2=='' %} visually-hidden {% endif %}">
+                                                                    {{ bad_auth2 }}
+                                                                </div>
+                                                                <div class="mb-2">
+                                                                    <label for="selecter" class="form-label"> Student:
+                                                                    </label>
+                                                                    <select id="selecter" type="search"
+                                                                        defaultValue="{{lesson[0]}}" list="character"
+                                                                        name="new_std" required
+                                                                        class="form-select border border-warning border-opacity-50 mx-auto">
+                                                                        <datalist id="character">
+                                                                            {% for student_ in
+                                                                            students_of_this_teacher %}
+                                                                            <option value="{{ student_[1] }}" {% if
+                                                                                student_[0]==lesson[0] %}
+                                                                                selected="selected" {% endif %}>
+                                                                                {{ student_[0] }}
+                                                                            </option>
+                                                                            {% endfor %}
+                                                                        </datalist>
+                                                                    </select>
+                                                                </div>
+
+                                                                <div class="mb-2">
+                                                                    <label for="theme" class="form-label"> Lesson theme:
+                                                                    </label>
+                                                                    <select id="theme" type="search"
+                                                                        defaultValue="{{lesson[2]}}"
+                                                                        list="character_theme" name="new_thm" required
+                                                                        class="form-select border border-warning border-opacity-50 mx-auto">
+                                                                        <datalist id="character_theme">
+                                                                            {% for theme in themes %}
+                                                                            <option value="{{ theme[0] }}" {% if
+                                                                                theme[0]==lesson[2] %} selected="selected" {%
+                                                                                endif %}>
+                                                                                {{ theme[0] }}</option>
+                                                                            {% endfor %}
+                                                                        </datalist>
+                                                                    </select>
+                                                                </div>
+
+                                                                <input type="submit" class="btn btn-signin w-50 mt-2"
+                                                                    value="Save changes">
+                                                            </form>
+                                                        </div>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endif %}
+
+
+                        <!-- DEL -->
+                        <div class="tab-pane fade" id="del" role="tabpanel" aria-labelledby="del-tab">
+                            {% if not future_les %}
+                            <p>You don't have lessons yet</p>
+                            {% else %}
+                            <form action="{{ url_for('api.add_lessons', Form_id='del') }}" method="POST"
+                                class="form-inline">
+                                <label for="selecter" class="form-label">Choose lesson:</label>
+                                <p><select id="selecter"
+                                        class="form-select border border-warning border-opacity-50 w-50 mx-auto"
+                                        type="search" list="character" name="choose_les" required>
+                                        <datalist id="character">
+                                            {% for lesson in future_les %}
+                                            <option value="{{ lesson[1] }}">{{ lesson[0] }} - {{ lesson[1]
+                                                }}
+                                            </option>
+                                            {% endfor %}
+                                        </datalist>
+                                    </select></p>
+                                <p><input type="submit" class="btn btn-signin w-25" value="Delete"></p>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"
+        integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"
+        crossorigin="anonymous"></script>
+
+
+</body>
+
+</html>

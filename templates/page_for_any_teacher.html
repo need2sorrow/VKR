@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{title}}</title>
+    <!-- <title> {% block title%} {{ title }} {% endblock %} </title> -->
+</head>
+
+<body>
+    <div>
+        <p>this is a {}</p>
+        <p>{} logged with Email: {}</p>
+        <div><p>Google Profile Picture:</p>
+        <img src="{}" alt="Google profile pic"></img></div>
+        <div>
+            <a class="button" href="{{url_for('index')}}">Вернуться к себе на страницу</a>
+        </div>
+        <a href="javascript:history.back()">Go Back</a>
+    </div>
+</body>
+
+</html>

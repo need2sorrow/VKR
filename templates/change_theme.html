@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <!-- <title> {% block title%} {{ title }} {% endblock %} </title> -->
+</head>
+
+<body>
+    <p> Изменить тему </p>
+    {% if not themes %}
+    <p> У вас пока что нет ни одной темы </p>
+    {% else %}
+    <div>
+        <p> Tемы: </p>
+        {% for theme in themes %}
+        <p><a class="button" href="{{ url_for('api.edit_theme_parameters', Theme_name=theme) }}"> {{ theme }} </a> </p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div>
+        <a class="button" href="{{url_for('index')}}">Вернуться к себе на страницу</a>
+    </div>
+
+</body>
+
+</html>

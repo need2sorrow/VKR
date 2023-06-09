@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <!-- <title> {% block title%} {{ title }} {% endblock %} </title> -->
+</head>
+
+<body>
+    {% if not students %}
+    <p>Сначала добавьте учеников, у вас их пока ноль</p>
+    <a class="button" href="/add_students">Добавить себе учеников</a>
+    {% else %}
+        {% if not lessons %}
+        <p>У вас пока не выставлено ни одного урока</p>
+        {% else %}
+        <div>
+            <p> Lesson editing </p>
+            <p> Your lessons: </p>
+            {% for student in students %}
+            <ul><h> {{ student[0] }} :</h>
+                {% for lesson in lessons %}
+                    {% if student[0] == lesson[0] and lesson[3] == "No" %}
+                    <li><a class="button" href="{{ url_for('api.change_les_parameters', Les_date=lesson[1]) }}"> {{ lesson[1] }} ({{lesson[3]}}) </a></li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endif %}
+    
+    <div>
+        <a class="button" href="/add_lessons">Add lessons</a>
+        <p><a class="button" href="/del_lessons">Delete lessons</a></p>
+    </div>
+    <div>
+        <a class="button" href="{{url_for('index')}}">Back to the main page</a>
+    </div>
+</body>
+
+</html>
+

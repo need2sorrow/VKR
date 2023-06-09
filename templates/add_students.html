@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+    <title>Students menu</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+            background-color: #eeeeee;
+        }
+
+        .header-col {
+            background-color: #d2dbda;
+        }
+
+        .logo {
+            background-color: #d2dbda;
+            /* background-color: #5fa8bb; */
+            height: 200px;
+        }
+
+        main {
+            background: #eeeeee;
+        }
+
+        /* form {
+            background: white;
+        } */
+
+        .btn-signin {
+            --bs-btn-color: #fff;
+            --bs-btn-bg: #5fa8bb;
+            --bs-btn-border-color: #5fa8bb;
+            --bs-btn-hover-color: #fff;
+            --bs-btn-hover-bg: #ffa147;
+            --bs-btn-hover-border-color: #ffa147;
+            --bs-btn-focus-shadow-rgb: 49, 132, 253;
+            --bs-btn-active-color: #fff;
+            --bs-btn-active-bg: #ea9543;
+            --bs-btn-active-border-color: #ea9543;
+            --bs-btn-active-shadow: inset 0 3px 5pxrgba(0, 0, 0, 0.125);
+            --bs-btn-disabled-color: #fff;
+            --bs-btn-disabled-bg: #5fa8bb;
+            --bs-btn-disabled-border-color: #5fa8bb;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-light sticky-top py-0 header-col">
+            <div class="container-fluid container mx-xs-0">
+                <a class="navbar-brand d-flex align-items-center" href="{{url_for('index')}}">
+                    <img class="mx-1" height="80" src="/static/images/Late2.png" alt="LaTe">
+                    <!-- <span class="d-none d-md-inline-block">LanguaTeach</span> -->
+                </a>
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
+                    aria-labelledby="offcanvasNavbarLabel">
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3 align-items-center">
+                            <li class="nav-item">
+                                <a class="d-flex nav-link link-dark align-items-center" aria-current="page"
+                                    {% if current_user.role == 'teacher' %} href="{{url_for('api.teacher_site')}}" {% else %} href="{{url_for('api.student_site')}}" {% endif %}>
+                                    <img width="20" height="17" class="me-2 opacity-50 d-lg-none"
+                                        src="/images/menu/home.svg" {% if current_user.role == 'teacher' %} alt="Teacher Site" {% else %} alt="Student Site" {% endif %}>
+                                        {% if current_user.role == 'teacher' %} Teacher Site {% else %} Student Site {% endif %}
+                                </a>
+                            </li>
+                            <li id="menu-services" class="nav-item d-none d-lg-block dropdown-center">
+                                <a class="d-flex nav-link link-dark align-items-center border rounded-1" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #eeeeee;
+                                    --bs-nav-link-padding-y: 0.2rem;">
+                                    {{current_user.name}}
+                                </a>
+                                <ul id="menu" class="dropdown-menu dropdown-menu-end">
+                                    <li><a href="/" class="dropdown-item">Main page</a></li>
+                                    <li><a href="/logout" class="dropdown-item">Log out</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="justify-content-center d-flex flex-column align-items-center mx-auto logo mb-2">
+        <img alt="LanguaTeach" width="550" src="/static/images/LanguaLearn.png" alt="LanguaLearn" />
+        <p class="fs-4"> Students menu </p>
+    </div>
+    <main class="container">
+        <div class="mt-4 row row-cols-md-2 gap-3">
+            <div class="card text-center" style="width: 38%;">
+                <div class="card-header bg-transparent">
+                    List of your students
+                </div>
+                <div class="card card-body border border-0">
+                    {% if not students %}
+                    <p>You don't have students yet. Add them below</p>
+                    {% else %}
+                    <div>
+                        <ul class="list-group list-group-flush">
+                            {% for student in students %}
+                            <li class="list-group-item"><a class="button text-decoration-none"
+                                    href="{{ url_for('api.page_student', Stud_email=student[1]) }}"> {{ student[0]
+                                    }} </a> </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    <!-- <p id="add_after_me_show"></p> -->
+                </div>
+            </div>
+
+            <div class="card text-center" style="width: 60%;">
+                <div class="card-header bg-transparent">
+                    <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active border border-bottom-0" id="add-tab" data-bs-toggle="tab" href="#add"
+                                data-bs-target="#add" type="button" role="tab" aria-controls="add" aria-selected="true">Add
+                                students</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {% if not students %} disabled {% endif %} border border-bottom-0"
+                                id="del-tab" data-bs-toggle="tab" data-bs-target="#del" type="button" role="tab" href="#del"
+                                aria-controls="del" aria-selected="false" onclick="dellCode()">Delete students</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="menuCONTENT">
+
+                        <!-- ADD -->
+                        <div class="tab-pane fade show active" id="add" role="tabpanel" aria-labelledby="add-tab">
+                            <div id="like_button_container"></div>
+                            {% if not all_std and not students %}
+                            <p> No one to add. Invite somebody. </p>
+                            {% else %}
+                            {% if not all_std %}
+                            <p> No one to add. Invite somebody.
+                            </p>
+                            {% else %}
+                            <form action="{{ url_for('api.add_students', Form_id='add') }}" method="POST"
+                                class="form-inline">
+                                <label for="selecter" class="form-label">Choose student:</label>
+                                <div class="select-wrapper">
+                                    <p><select id="selecter"
+                                            class="form-select border border-warning border-opacity-50 w-50 mx-auto"
+                                            type="search" list="character" name="choose_student_for_add" required>
+                                            <datalist id="character">
+                                                {% for student in all_std %}
+                                                <option value="{{ student[1] }}">{{ student[0] }}</option>
+                                                {% endfor %}
+                                            </datalist>
+                                        </select></p>
+                                    <p><input type="submit" class="btn btn-signin w-25" value="Add"></p>
+                                </div>
+                            </form>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+
+
+                        <!-- DEL -->
+                        <div class="tab-pane fade" id="del" role="tabpanel" aria-labelledby="del-tab">
+                            
+                            {% if not students %}
+                            <p>You don't have students yet </p>
+                            {% else %}
+                            <form action="{{ url_for('api.add_students', Form_id='del') }}" method="POST"
+                                class="form-inline">
+                                <label for="selecter" class="form-label">Choose student:</label>
+                                <div class="select-wrapper">
+                                    <p><select id="selecter"
+                                            class="form-select border border-warning border-opacity-50 w-50 mx-auto"
+                                            type="search" list="character" name="choose_student_for_del" required>
+                                            <datalist id="character">
+                                                {% for student in students %}
+                                                <option value="{{ student[1] }}">{{ student[0] }}</option>
+                                                {% endfor %}
+                                            </datalist>
+                                        </select></p>
+                                    <p><input type="submit" class="btn btn-signin w-25" value="Delete"></p>
+                                </div>
+                            </form>
+                            {% endif %}
+                            <!-- <div id="del_button_container"></div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
+    <!-- <script>
+        // var act = "{{action_type}}";
+        // var foo = getParameterByName('Form_id');
+        // console.log(foo) ;
+        var urlParams;
+        (window.onpopstate = function () {
+            var match,
+                pl = /\+/g,  // Regex for replacing addition symbol with a space
+                search = /([^&=]+)=?([^&]*)/g,
+                decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+                query = window.location.search.substring(1);
+
+            urlParams = {};
+            while (match = search.exec(query))
+                urlParams[decode(match[1])] = decode(match[2]);
+        })();
+        if (urlParams["Form_id"] == "del") {
+            var triggerEl = document.querySelector('#myTab button[data-bs-target="#del"]')
+            bootstrap.Tab.getInstance(triggerEl).show() // Select tab by name
+        }
+
+    </script> -->
+   <!-- Загрузим React. -->
+    <!-- Примечание: для деплоя на продакшен замените окончание «development.js» на «production.min.js». -->
+
+
+    <!-- Загрузим наш React-компонент. -->
+    <!-- <script src="like_button.js"></script> -->
+    <!-- <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="{{url_for('static', filename='like_button.js')}}" type='text/babel'></script>
+    <script src="https://cdn.jsdelivr.net/npm/react/umd/react.production.min.js" crossorigin></script>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/react-dom/umd/react-dom.production.min.js"
+  crossorigin></script>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/react-bootstrap@next/dist/react-bootstrap.min.js"
+  crossorigin></script> -->
+
+    <!-- Load our React component. -->
+    <!-- <script src="{{url_for('static', filename='like_button.js')}}"></script>
+    <script src="{{url_for('static', filename='del_button.js')}}"></script> -->
+    <!-- <script src="{{url_for('static', filename='forms.js')}}"></script> -->
+
+<!-- <script>var Alert = ReactBootstrap.Alert;</script> -->
+<!-- <script>
+        function dellCode() {
+            document.getElementById("add_after_me_dell").insertAdjacentHTML("afterend",
+                "<h3>This is the text which has been inserted by JS</h3> {% if not students %} <p> У вас нет студентов </p> {% else %} <form action='{{ url_for('api.add_students', Form_id='del') }}' method='POST' class='form-inline'> <label for='selecter' class='form-label'>Choose student:</label> <div class='select-wrapper'> <p><select id='selecter' class='form-select border border-warning border-opacity-50 w-50 mx-auto' type='search' list='character' name='choose_student_for_del' required> <datalist id='character'> {% for student in students %} <option value='{{ student[1] }}'>{{ student[0] }}</option> {% endfor %} </datalist> </select></p> <p><input type='submit' class='btn btn-signin w-25' value='Delete'></p> </div> </form> {% endif %}"); }
+    </script> -->
+    <!-- <script>
+        function showCode() {
+            document.getElementById("add_after_me_show").insertAdjacentHTML("afterend",
+                "{% if not students %} <p>У вас пока что нет учеников. Добавьте их ниже</p> {% else %} <div> <ul class='list-group list-group-flush'> {% for student in students %} <li class='list-group-item'><a class='button text-decoration-none' href='{{ url_for('api.page_student', Stud_email=student[1]) }}'> {{ student[0] }} </a> </li> {% endfor %} </ul> </div> {% endif %}"); }
+    </script> -->
+
+</body>
+
+</html>

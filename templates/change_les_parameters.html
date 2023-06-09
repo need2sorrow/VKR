@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <!-- <title> {% block title%} {{ title }} {% endblock %} </title> -->    
+</head>
+
+<body>
+    <p> Редактирование урока </p>
+    <p> Дата урока {{date}} </p>
+    <p> Студент: {{std}} </p>
+    <p> Тема: {{thm}} </p>
+    
+        <form action="{{url_for('api.change_les_parameters', Les_date=date)}}" method="POST" class="form-inline">
+            <p> Дата: <input type="datetime-local" value="{{date}}" id="localdate" name="new_date" required /></p>
+            <p> Студент: 
+                <select id="selecter" type="search" defaultValue="{{std}}" list="character" name="new_std" required>
+                    <datalist id="character">
+                        {% for student in students %}
+                        <option value="{{ student[1] }}" {% if student[1] == std %} selected="selected" {% endif %}>{{ student[0] }}</option>
+                        {% endfor %}
+                    </datalist>
+                </select>
+            </p>
+            <p> Тема урока: 
+                <select id="theme" type="search" defaultValue="{{thm}}" list="character_theme" name="new_thm" required>
+                    <datalist id="character_theme">
+                        {% for theme in themes %}
+                        <option value="{{ theme }}" {% if theme == thm %} selected="selected" {% endif %} >{{ theme }}</option>
+                        {% endfor %}
+                    </datalist>
+                </select>
+            </p>
+            
+            <input type="submit" value="Изменить">
+        </form>
+        <div class="message" >
+            <label name="bad_auth" id="bad_message">{{bad_auth}}</label>
+        </div>
+    <div>
+        <a class="button" href="/add_lessons">Добавить уроки</a>
+        <p><a class="button" href="/del_lessons">Удалить уроки</a></p>
+    </div>
+    <div>
+        <a class="button" href="{{url_for('index')}}">Вернуться к себе на страницу</a>
+    </div>
+</body>
+
+</html>

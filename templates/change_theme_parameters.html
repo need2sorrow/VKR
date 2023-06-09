@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <!-- <title> {% block title%} {{ title }} {% endblock %} </title> -->
+</head>
+
+<body>
+    <p> Редактирование темы </p>
+    <p> Сейчас урок называется {{name}} </p>
+    <p> Материалы: {{mat}} </p>
+    <p> Домашка: {{hw}} </p>
+    
+        <form action="{{url_for('api.edit_theme_parameters', Theme_name=name, formid=1)}}" method="POST" class="form-inline">
+            <p> Тема урока: <input type="text" value="{{name}}" name="new_name"></p>
+            <p> Материалы: <input type="text" value="{{mat}}" name="new_mat"></p>
+            <p> Домашка: <input type="text" value="{{hw}}" name="new_hw"></p>
+            <input type="submit"  value="Изменить">
+        </form>
+        
+    <div>
+        <a class="button" href="{{url_for('index')}}">Вернуться к себе на страницу</a>
+    </div>
+</body>
+
+</html>

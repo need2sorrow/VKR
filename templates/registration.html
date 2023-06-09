@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+    <title>Sign up LanguaTeach</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .form-signin {
+            max-width: 330px;
+            padding: 15px;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        .full-page {
+            height: 100vh;
+            width: 100vw;
+        }
+
+        main {
+            background: #eeeeee;
+        }
+
+        form {
+            background: white;
+        }
+
+        .btn-signin {
+            --bs-btn-color: #fff;
+            --bs-btn-bg: #5fa8bb;
+            --bs-btn-border-color: #5fa8bb;
+            --bs-btn-hover-color: #fff;
+            --bs-btn-hover-bg: #ffa147;
+            --bs-btn-hover-border-color: #ffa147;
+            --bs-btn-focus-shadow-rgb: 49, 132, 253;
+            --bs-btn-active-color: #fff;
+            --bs-btn-active-bg: #ea9543;
+            --bs-btn-active-border-color: #ea9543;
+            --bs-btn-active-shadow: inset 0 3px 5pxrgba(0, 0, 0, 0.125);
+            --bs-btn-disabled-color: #fff;
+            --bs-btn-disabled-bg: #5fa8bb;
+            --bs-btn-disabled-border-color: #5fa8bb;
+        }
+
+        .min-vw-55 {
+            min-width: 55vh !important;
+        }
+
+        .alert {
+            --bs-alert-padding-y: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="h-100">
+        <div class="container-sm flex-column justify-content-center d-flex align-items-center min-vh-100">
+            <form class="form-signin col-7 border rounded-2 p-5 mx-auto min-vw-55" method="POST"
+                action="{{url_for('form_registration')}}">
+                <h4 class="mb-4 text-center">Sign up LanguaTeach</h4>
+                <div class="mb-3">
+                    <input type="email" class="form-control border border-warning border-opacity-50"
+                        aria-describedby="emailHelp" name="Email" autofocus="autofocus" placeholder="Email" required>
+                </div>
+                <div class="mb-3">
+                    <input type="password" class="form-control border border-warning border-opacity-50" name="Password"
+                        placeholder="Password" required>
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control border border-warning border-opacity-50" name="Name"
+                        placeholder="Name and Surname" required>
+                </div>
+                <div class="mb-3">
+                    <label for="select" class="form-label">Choose your role</label>
+                    <select id="select" class="form-select border border-warning border-opacity-50" list="rolesname" name="Role" required>
+                        <datalist id="rolesname">
+                            <option value="student">I'm student</option>
+                            <option value="teacher">I'm teacher</option>
+                        </datalist>
+                    </select>
+                </div>
+                <div class="mb-3 text-center {% if bad_auth=="" %} visually-hidden {% endif %}">
+                    <div class="alert alert-danger " role="alert" name="bad_auth">
+                        {{ bad_auth }}
+                    </div>
+                </div>
+                <div class="mb-3 text-center">
+                    <button type="submit" class="btn btn-signin w-100">Sign up</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>

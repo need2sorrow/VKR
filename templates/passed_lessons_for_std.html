@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{title}}</title>
+    <!-- <title> {% block title%} {{ title }} {% endblock %} </title> -->
+</head>
+
+<body>
+     
+    <div>
+        {% if lessons %}
+        <p> Пройденные уроки: </p>
+        {% for teacher in teachers %}
+        <ul><h> {{ teacher[0] }} :</h>
+            {% for lesson in lessons %}
+                {% if teacher[0] == lesson[0] %}
+                    <li>{{ lesson[1] }} ({{lesson[3]}}) - <a class="button" href="{{ url_for('api.page_theme', Teach_email=teacher[1], Theme_name=lesson[2]) }}"> {{ lesson[2] }} </a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        {% endfor %}
+        {% endif %}
+    </div>
+    <a href="javascript:history.back()">Go Back</a>
+    <div>
+        <a class="button" href="{{url_for('index')}}">Вернуться к себе на страницу</a>
+    </div>
+</body>
+
+</html>

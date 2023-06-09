@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+    <title>Students menu</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+            background-color: #eeeeee;
+        }
+
+        .header-col {
+            background-color: #d2dbda;
+        }
+
+        .logo {
+            background-color: #d2dbda;
+            /* background-color: #5fa8bb; */
+            height: 200px;
+        }
+
+        main {
+            background: #eeeeee;
+        }
+
+        /* form {
+            background: white;
+        } */
+
+        .btn-signin {
+            --bs-btn-color: #fff;
+            --bs-btn-bg: #5fa8bb;
+            --bs-btn-border-color: #5fa8bb;
+            --bs-btn-hover-color: #fff;
+            --bs-btn-hover-bg: #ffa147;
+            --bs-btn-hover-border-color: #ffa147;
+            --bs-btn-focus-shadow-rgb: 49, 132, 253;
+            --bs-btn-active-color: #fff;
+            --bs-btn-active-bg: #ea9543;
+            --bs-btn-active-border-color: #ea9543;
+            --bs-btn-active-shadow: inset 0 3px 5pxrgba(0, 0, 0, 0.125);
+            --bs-btn-disabled-color: #fff;
+            --bs-btn-disabled-bg: #5fa8bb;
+            --bs-btn-disabled-border-color: #5fa8bb;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-light sticky-top py-0 header-col">
+            <div class="container-fluid container mx-xs-0">
+                <a class="navbar-brand d-flex align-items-center" href="{{url_for('index')}}">
+                    <img class="mx-1" height="80" src="/static/images/Late2.png" alt="LaTe">
+                    <!-- <span class="d-none d-md-inline-block">LanguaTeach</span> -->
+                </a>
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
+                    aria-labelledby="offcanvasNavbarLabel">
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3 align-items-center">
+                            <li class="nav-item">
+                                <a class="d-flex nav-link link-dark align-items-center border rounded-1" aria-current="page"style="background-color: #a6c5cd;
+                                --bs-nav-link-padding-y: 0.2rem;"
+                                    {% if current_user.role == 'teacher' %} href="{{url_for('api.teacher_site')}}" {% else %} href="{{url_for('api.student_site')}}" {% endif %}>
+                                    <img width="20" height="17" class="me-2 opacity-50 d-lg-none"
+                                        src="/images/menu/home.svg" {% if current_user.role == 'teacher' %} alt="Teacher Site" {% else %} alt="Student Site" {% endif %}>
+                                        {% if current_user.role == 'teacher' %} Teacher Site {% else %} Student Site {% endif %}
+                                </a>
+                            </li>
+                            <li id="menu-services" class="nav-item d-none d-lg-block dropdown-center">
+                                <a class="d-flex nav-link link-dark align-items-center border rounded-1" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #eeeeee;
+                                    --bs-nav-link-padding-y: 0.2rem;">
+                                    {{current_user.name}}
+                                </a>
+                                <ul id="menu" class="dropdown-menu dropdown-menu-end">
+                                    <li><a href="/" class="dropdown-item">Main page</a></li>
+                                    <li><a href="/logout" class="dropdown-item">Log out</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="justify-content-center d-flex flex-column align-items-center mx-auto logo mb-2">
+        <img alt="LanguaTeach" width="550" src="/static/images/LanguaLearn.png" alt="LanguaLearn" />
+        <p class="fs-4"> Themes menu </p>
+    </div>
+    <main class="container">
+        <div class="mt-4 row row-cols-md-2 gap-3">
+            <div class="card text-center" style="width: 38%;">
+                <div class="card-header bg-transparent">
+                    List of your themes 
+                </div>
+                <div class="card card-body border border-0">
+                    {% if not themes %}
+                    <p>You don't have any theme. Please create.</p>
+                    {% else %}
+                    <div>
+                        <ul class="list-group list-group-flush">
+                            {% for theme in themes %}
+                            <li class="list-group-item"><a class="button text-decoration-none"
+                                href="{{ url_for('api.page_theme', Theme_name=theme) }}"> {{ theme[0] }} </a> </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card text-center" style="width: 60%;">
+                <div class="card-header bg-transparent">
+                    <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active border border-bottom-0" id="add-tab" data-bs-toggle="tab"
+                                href="#add" data-bs-target="#add" type="button" role="tab" aria-controls="add"
+                                aria-selected="true">Add
+                                themes</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {% if not themes %} disabled {% endif %} border border-bottom-0"
+                                id="edit-tab" data-bs-toggle="tab" data-bs-target="#edit" type="button" role="tab"
+                                href="#edit" aria-controls="edit" aria-selected="false">Edit themes</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {% if not themes %} disabled {% endif %} border border-bottom-0"
+                                id="del-tab" data-bs-toggle="tab" data-bs-target="#del" type="button" role="tab"
+                                href="#del" aria-controls="del" aria-selected="false">Delete
+                                themes</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="menuCONTENT">
+
+                        <!-- ADD -->
+                        <div class="tab-pane fade show active" id="add" role="tabpanel" aria-labelledby="add-tab">
+                            <form action="{{url_for('api.new_theme', Form_id='add')}}" method="POST"
+                                class="form-inline">
+                                <div class="input-group flex-nowrap mb-3 {% if bad_auth!='' %} is-invalid {% endif %}">
+                                    <input type="text" name="enter_name_of_theme" required class="form-control border border-warning border-opacity-50 {% if bad_auth!='' %} border-danger is-invalid {% endif %}" aria-label="Name" aria-describedby="name">
+                                    <span class="input-group-text" id="name">Theme</span>
+                                    
+                                </div>
+                                <div class="message invalid-feedback {% if bad_auth=='' %} visually-hidden {% endif %} mb-3">
+                                        {{ bad_auth }}
+                                    </div>
+                                  <div class="input-group flex-nowrap mb-3">
+                                    <input type="file" name="materials" class="form-control border border-warning border-opacity-50" aria-label="Name" aria-describedby="name">
+                                    <span class="input-group-text" id="name">Themes materials</span>
+                                  </div>
+                                  <div class="input-group flex-nowrap mb-3">
+                                    <input type="text" name="homework" class="form-control border border-warning border-opacity-50" aria-label="Name" aria-describedby="name">
+                                    <span class="input-group-text" id="name">Homework</span>
+                                  </div>
+                                <!-- <label for="selecter" class="form-label">Введите название темы:</label>
+                                <p><input id="selecter" type="text" name="enter_name_of_theme" required></p>
+                                <p>Добавьте материалы урока:</p>
+                                <p><input id="selecter" type="text" name="materials" required></p>
+                                <p>Сформулируйте домашнее задание:</p>
+                                <p><input id="selecter" type="text" name="homework" required></p> -->
+                                
+                                <p><input type="submit" class="btn btn-signin w-25" value="Create"></p>
+                            </form>
+                        </div>
+
+                        <!-- EDIT -->
+                        <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
+                            <div class="row">
+                                <div class="accordion" id="accordionExample">
+                                    {% for i, theme in enumerate(themes) %}
+                                    <div class="card mb-1">
+                                        <div class="card-header p-0" id="heading{{theme[0]}}">
+                                            <h2 class="my-0 row">
+                                                <button class="btn btn-link btn-block text-decoration-none collapsed" type="button"
+                                                    data-toggle="collapse" data-target="#collapse{{theme[0]}}"
+                                                    aria-expanded="false" aria-controls="collapse{{theme[0]}}">
+                                                    {{theme[0]}}
+                                                </button>
+                                                <!-- style="color: #f98d0d;" -->
+                                            </h2>
+                                        </div>
+                                        <div id="collapse{{theme[0]}}" class="collapse"
+                                            aria-labelledby="heading{{theme[0]}}" data-parent="#accordionExample">
+                                            <div class="card-body">
+                                                <form
+                                                    action="{{url_for('api.new_theme', Form_id='edit', Theme_name=theme[0])}}"
+                                                    method="POST" class="form-inline">
+                                                    <!-- <div class="mb-2"><label for="name" class="form-label"> Тема урока: </label>
+                                                        <input type="text" id="name" value="{{theme[0]}}"
+                                                            name="new_name"
+                                                            class="form-control border border-warning border-opacity-50 w-50 mx-auto">
+                                                    </div> -->
+                                                    <div class="input-group flex-nowrap mb-3">
+                                                        <input type="text" value="{{theme[0]}}"
+                                                        name="new_name" class="form-control border border-warning border-opacity-50" aria-label="Name" aria-describedby="name">
+                                                        <span class="input-group-text" id="name">Theme</span>
+                                                      </div>
+                                                    <!-- <div class="mb-2"><label for="mat" class="form-label"> Материалы: </label>
+                                                        <input type="text" id="mat" value="{{theme[1]}}" name="new_mat"
+                                                            class="form-control border border-warning border-opacity-50 w-50 mx-auto">
+                                                    </div> -->
+                                                    <div class="input-group flex-nowrap mb-3">
+                                                        <!-- <span class="input-group-text" id="mat">Материалы</span>
+                                                        <input type="text" value="{{theme[1]}}" name="new_mat" class="form-control border border-warning border-opacity-50" aria-label="Materials" aria-describedby="mat"> -->
+                                                        <input type="file" class="form-control" id="mat" value="{{theme[1]}}" name="new_mat">
+                                                        <label class="input-group-text" for="mat">Upload new materials</label>
+                                                      </div>
+                                                    <!-- <div class="mb-2"><label for="hw" class="form-label"> Домашка: </label>
+                                                        <input type="text" id="hw" value="{{theme[2]}}" name="new_hw"
+                                                            class="form-control border border-warning border-opacity-50 w-50 mx-auto">
+                                                    </div> -->
+                                                    <div class="input-group flex-nowrap mb-3">
+                                                        <input type="text" value="{{theme[2]}}" name="new_hw" class="form-control border border-warning border-opacity-50" aria-label="Materials" aria-describedby="mat">
+                                                        <span class="input-group-text" id="mat">Homework</span>
+                                                      </div>
+                                                    <input type="submit" class="btn btn-signin w-25 mt-2" value="Save changes">
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DEL -->
+                        <div class="tab-pane fade" id="del" role="tabpanel" aria-labelledby="del-tab">
+                            <form action="{{url_for('api.new_theme', Form_id='del')}}" method="POST"
+                                class="form-inline">
+                                <label for="selecter" class="form-label">Choose deleting theme</label>
+                                <p><select id="selecter" type="search" list="character" name="choose_theme" required
+                                        class="form-select border border-warning border-opacity-50 w-50 mx-auto">
+                                        <datalist id="character">
+                                            {% for theme in themes %}
+                                            <option value="{{ theme[0] }}">{{ theme[0] }}</option>
+                                            {% endfor %}
+                                        </datalist>
+                                    </select></p>
+                                <p><input type="submit" class="btn btn-signin w-25" value="Delete"></p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"
+        integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

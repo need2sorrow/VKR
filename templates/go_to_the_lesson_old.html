@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <!-- <title> {% block title%} {{ title }} {% endblock %} </title> -->
+</head>
+<!-- <script type="text/javascript">
+    function changeScreenSize() {
+        window.resizeTo(screen.width - 300, screen.height - 500)
+    }
+
+    document.getElementById("txt_1").value = getSavedValue("txt_1");    // set the value to this input
+    document.getElementById("txt_2").value = getSavedValue("txt_2");   // set the value to this input
+    document.getElementById("les_notes").value = getSavedValue("les_notes");
+    /* Here you can add more inputs to set value. if it's saved */
+
+    //Save the value function - save it to localStorage as (ID, VALUE)
+    function saveValue(e) {
+        var id = e.id;  // get the sender's id to save it . 
+        var val = e.value; // get the value. 
+        localStorage.setItem(id, val);// Every time user writing something, the localStorage's value will override . 
+    }
+
+    //get the saved value function - return the value of "v" from localStorage. 
+    function getSavedValue(v) {
+        if (!localStorage.getItem(v)) {
+            return "{{note}}";// You can change this to your defualt value. 
+        }
+        return localStorage.getItem(v);
+    }
+
+    function postnote(){
+        var data = getSavedValue("les_notes")
+        $.post( "/postmethod", {
+            javascript_data: data 
+        });
+    }
+</script> -->
+
+<body onload="changeScreenSize()">
+
+
+
+    <div id="content">
+        <!-- <div id="left" style="width: 63%; float:left; background-color: blue;">
+            <div id="object1" width="100%" height="700"
+                style="background-color: aquamarine; overflow: hidden; position: relative;">
+                <iframe src="https://us04web.zoom.us/j/75665924714?pwd=EFasYR17PjYAyaOa3FaWGjd7cb1kag.1"
+                    style="width:100%; height:100%">
+                </iframe>
+            </div>
+
+        </div> -->
+
+        <!-- <div id="right"
+            style="width: 35%; float:right; text-align: center; padding: 1% 1%; background-color: blueviolet;"> -->
+            <form action="" method="POST" class="form-inline">
+                <textarea name="les_notes" id="les_notes" rows="40" placeholder="Заметки"
+                    onkeyup="saveValue(this); postnote();" onchange='saveValue(this); postnote();' style="width: 95%">{{ note }}</textarea>
+                <p><input type="submit" value="Сохранить изменения"></p>
+                <input type="text" id="txt_1" name="txt_1" onchange='saveValue(this);' />
+                <input type="text" id="txt_2" name="txt_2" onchange='saveValue(this);' />
+                <!-- <input type="text" cols="62" name="les_notes"  style="position: relative;  width: 90%; padding: 310px 8px; margin-top: 5%; line-height: 28px;"> -->
+            </form>
+            <div>
+                <a class="button" href="{{url_for('index')}}">Завершить урок</a>
+            </div>
+        <!-- </div> -->
+        <!-- <div id="right" style="width: 35%; float:right; background-color: blueviolet;">line-height: 28px;cols="40"
+            <div id="object4" style="text-align: center;">
+            <form action="textarea1.php" method="post">
+                <p style="position: relative">Заметки:</p>
+                <textarea rows="38" cols="62" name="text" style="position: relative"></textarea>
+                <p><input type="submit" value="Завершить урок" style="position: relative"></p>
+            </form>
+            </div>
+        </div> -->
+    </div>
+</body>
+
+</html>
